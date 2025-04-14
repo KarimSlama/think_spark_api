@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     
     'register',
+    'preferences',
+    'ideas',
     "corsheaders",
 ]
 
@@ -66,11 +68,15 @@ AUTHENTICATION_BACKENDS = (
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-     ),
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
     ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.AllowAny',
+    # ],
 }
+
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -80,7 +86,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'allauth.account.middleware.AccountMiddleware',  # <<< أضف ده هنا
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -168,7 +174,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR / "media")
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Default primary key field type
@@ -188,6 +198,6 @@ CORS_ALLOWED_ORIGINS = [
 
 ]
 
-ALLOWED_HOSTS = ["*", "127.0.0.1", "0.0.0.0", "10.0.2.2", "localhost"]
+ALLOWED_HOSTS = ["*","127.0.0.1", "0.0.0.0", "10.0.2.2", "localhost"]
 
 CORS_ALLOW_ALL_ORIGINS = True

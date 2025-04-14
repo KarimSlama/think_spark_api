@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
@@ -11,8 +11,11 @@ from .serializers.verify_code_reset_request_serializers import VerifyCodeResetRe
 from .serializers.login_serializers import LoginSerializers
 from .models import Profile
 from .serializers.register_serializers import RegisterSerializers
+from rest_framework.permissions import AllowAny
+
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
     serializer = RegisterSerializers(data=request.data)
 
@@ -34,6 +37,7 @@ def register(request):
                 "is_verified": profile.is_verified,
                 "created_at": profile.created_at,
                 "token": str(refresh.access_token),
+                "refresh": str(refresh),
             }
         }, status=status.HTTP_201_CREATED)
 
@@ -46,6 +50,7 @@ def register(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login(request):
     serializers = LoginSerializers(data=request.data)
 
@@ -62,6 +67,7 @@ def login(request):
                 "email": validated_data["email"],
                 "phone": validated_data["phone"],
                 "token": validated_data["access"],
+                "refresh": validated_data["refresh"],
                 "is_verified": validated_data["is_verified"],
                 "user_type": validated_data["user_type"],
                 "created_at": validated_data["created_at"],
