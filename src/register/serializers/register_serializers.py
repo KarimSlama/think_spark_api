@@ -4,7 +4,7 @@ from register.models import Profile
 
 class RegisterSerializers(serializers.ModelSerializer):
     phone = serializers.CharField(write_only=True, required=True)
-    user_type = serializers.ChoiceField(choices=[("creative", "Creative"), ("investor", "Investor")])
+    user_type = serializers.ChoiceField(choices=[("creative", "Creative"), ("investor", "Investor")], default="creative")
     is_verified = serializers.BooleanField(default=False, read_only=True)
 
     class Meta:
