@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import environ
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 env = environ.Env()
 environ.Env.read_env()
@@ -55,6 +58,7 @@ INSTALLED_APPS = [
     'register',
     'preferences',
     'ideas',
+    'meetings',
     "corsheaders",
 ]
 
@@ -90,6 +94,16 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
+
 
 
 ROOT_URLCONF = 'project.urls'
@@ -177,8 +191,11 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 
-MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR / "media")
+# MEDIA_URL = 'media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR / "media")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Default primary key field type

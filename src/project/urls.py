@@ -13,4 +13,8 @@ urlpatterns = [
     path('auth/', include('register.urls', namespace='register')),
     path('preferences/', include('preferences.urls', namespace='preferences')),
     path('ideas/', include('ideas.urls', namespace='ideas')),
+    path('', include('meetings.urls', namespace='meetings')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
