@@ -49,6 +49,7 @@ class RegisterSerializers(serializers.ModelSerializer):
         
         user = User.objects.create_user(**validated_data)
 
+
         profile = Profile.objects.create(
             user=user,
             phone=phone,

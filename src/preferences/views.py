@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from preferences.models import Preferences
+from preferences.serializers.category_with_ideas_serializers import CategoryWithIdeasSerializer
 from preferences.serializers.preferences_serializer import PreferencesSerializer
 
 @api_view(['GET'])
@@ -27,4 +28,10 @@ def location_list(request):
 
     serializer = PreferencesSerializer(locations, many=True)
 
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def categories_with_ideas(request):
+    categories = Preferences.objects.filter(type='category')
+    serializer = CategoryWithIdeasSerializer(categories, many=True)
     return Response(serializer.data)

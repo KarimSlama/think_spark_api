@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 
+from register.serializers.profile_serializers import ProfileSerializer
+
 from .serializers.password_reset_request_serializers import PasswordResetRequestSerializer
 from .serializers.reset_password_serializers import RestPasswordSerializers
 from .serializers.verify_code_reset_request_serializers import VerifyCodeResetRequestSerializers
@@ -24,6 +26,10 @@ def register(request):
         user = User.objects.get(username=request.data['username'])
         profile = Profile.objects.get(user=user)
         refresh = RefreshToken.for_user(user)
+
+        print("Access Token:", str(refresh.access_token))  # طباعة للتأكد
+        print("Refresh Token:", str(refresh))
+
 
         return Response({
             "status": "success",
@@ -143,3 +149,15 @@ def reset_password(request):
 
     return Response({"error": serializer.errors.get("error", ["Unknown error"])[0]}, status=400)
 
+
+@api_view(['GET','PATCH'])
+@permission_classes([AllowAny])
+def get_user_profile(request):
+    profile = request.user.profile
+    serializer = ProfileSerializer(profile, data=request.data, partial=True)
+    if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Profile updated successfully!", "profile": serializer.data}, status=status.HTTP_200_OK)
+        
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
