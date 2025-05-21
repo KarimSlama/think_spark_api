@@ -10,4 +10,5 @@ urlpatterns = [
     path('verify_code/', views.verify_code, name='verify_code'),
     path('reset_password/', views.reset_password, name='reset_password'),
     path('profile_model/', views.get_user_profile, name='get_user_profile'),
+    path('list_investors/', views.list_investors, name='list_investors'),
 ]

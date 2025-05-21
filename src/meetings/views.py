@@ -7,6 +7,7 @@ from .models import Idea, Meeting
 import firebase_admin
 from firebase_admin import credentials, messaging
 import random
+from core.notifications import send_notification
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -85,26 +86,15 @@ def my_scheduled_meetings(request):
 @permission_classes([IsAuthenticated])
 def save_device_token(request):
     token = request.data.get('device_token')
+    
+    token = token.strip()
+
     if not token:
         return Response({'error': 'Token is required'}, status=400)
 
     profile = request.user.profile
     profile.device_token = token
     profile.save()
+
     print("Device Token SAVE DEV:", profile.device_token)
     return Response({'message': 'Token saved successfully'})
-
-
-cred = credentials.Certificate('E:/Django Projects/think-spark-1c5d6-firebase-adminsdk-fbsvc-976e200044.json')
-firebase_admin.initialize_app(cred)
-
-def send_notification(token, title, body):
-    message = messaging.Message(
-        notification=messaging.Notification(
-            title=title,
-            body=body,
-        ),
-        token=token,
-    )
-    response = messaging.send(message)
-    print('Successfully sent message:', response)

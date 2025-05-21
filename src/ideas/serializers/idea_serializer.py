@@ -84,3 +84,35 @@ class IdeaSerializer(serializers.ModelSerializer):
         
         idea.categories.set(category_ids)
         return idea
+    
+
+    def update(self, instance, validated_data):
+        category_ids = validated_data.pop('category_ids', None)
+        tabs_data = self.context['request'].data.get('tabs', {})
+
+        instance.title = validated_data.get('title', instance.title)
+        instance.location = validated_data.get('location', instance.location)
+        instance.save()
+
+        if category_ids is not None:
+            instance.categories.set(category_ids)
+
+        if 'description' in tabs_data:
+            desc_data = tabs_data['description']
+            description = instance.description
+            description.problems = desc_data.get('problems', description.problems)
+            description.solutions = desc_data.get('solutions', description.solutions)
+            description.why_it_works = desc_data.get('why_it_works', description.why_it_works)
+            description.benifits = desc_data.get('benifits', description.benifits)
+            description.save()
+
+        if 'requirements' in tabs_data:
+            req_data = tabs_data['requirements']
+            requirements = instance.requirements
+            requirements.technical = req_data.get('technical', requirements.technical)
+            requirements.operational = req_data.get('operational', requirements.operational)
+            requirements.team = req_data.get('team', requirements.team)
+            requirements.expected_duration = req_data.get('expected_duration', requirements.expected_duration)
+            requirements.save()
+
+        return instance
