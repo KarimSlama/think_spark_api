@@ -31,8 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = []
 
@@ -88,15 +87,10 @@ AUTHENTICATION_BACKENDS = (
 ASGI_APPLICATION = 'project.asgi.application'
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('192.168.1.7', 6378)], 
-            "channel_capacity": {
-                "http.request": 200,
-                "http.response!*": 10,
-            },
-            "capacity": 1000,
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [env("REDIS_URL")],
         },
     },
 }
@@ -220,6 +214,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
 
 # MEDIA_URL = 'media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR / "media")
@@ -244,6 +241,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://10.0.2.2:8000',
 ]
 
-ALLOWED_HOSTS = ["*"]
+
+ALLOWED_HOSTS = ["think_spark.onrender.com"]
 
 CORS_ALLOW_ALL_ORIGINS = True
