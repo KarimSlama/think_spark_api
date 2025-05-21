@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 
+from register.serializers.investor_serializer import InvestorListSerializer
 from register.serializers.profile_serializers import ProfileSerializer
-
 from .serializers.password_reset_request_serializers import PasswordResetRequestSerializer
 from .serializers.reset_password_serializers import RestPasswordSerializers
 from .serializers.verify_code_reset_request_serializers import VerifyCodeResetRequestSerializers
@@ -13,7 +13,7 @@ from .serializers.verify_code_reset_request_serializers import VerifyCodeResetRe
 from .serializers.login_serializers import LoginSerializers
 from .models import Profile
 from .serializers.register_serializers import RegisterSerializers
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny , IsAuthenticated
 
 
 @api_view(['POST'])
@@ -26,10 +26,6 @@ def register(request):
         user = User.objects.get(username=request.data['username'])
         profile = Profile.objects.get(user=user)
         refresh = RefreshToken.for_user(user)
-
-        print("Access Token:", str(refresh.access_token))  # طباعة للتأكد
-        print("Refresh Token:", str(refresh))
-
 
         return Response({
             "status": "success",
@@ -151,7 +147,7 @@ def reset_password(request):
 
 
 @api_view(['GET','PATCH'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_user_profile(request):
     profile = request.user.profile
     serializer = ProfileSerializer(profile, data=request.data, partial=True)
@@ -161,3 +157,10 @@ def get_user_profile(request):
         
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def list_investors(request):
+    investors = Profile.objects.filter(user_type='Investor')
+    serializer = InvestorListSerializer(investors, many=True, context={'request': request})
+    return Response({"investors": serializer.data}, status=status.HTTP_200_OK)

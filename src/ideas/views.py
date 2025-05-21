@@ -30,6 +30,23 @@ def idea_details(request, id):
     return Response({'data': serializer.data}, status=200)
 
 
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_idea(request, id):
+    try:
+        idea = Idea.objects.get(id=id)
+    except Idea.DoesNotExist:
+        return Response({'error': 'Idea not found'}, status=404)
+    
+    context = {'request': request}
+    
+    serializer = IdeaSerializer(idea, data=request.data, partial=True, context=context)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=200)
+    return Response(serializer.errors, status=404)
+
 @api_view(['GET'])
 def search_ideas(request):
     query = request.GET.get('q', '')

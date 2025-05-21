@@ -14,6 +14,7 @@ urlpatterns = [
     path('preferences/', include('preferences.urls', namespace='preferences')),
     path('ideas/', include('ideas.urls', namespace='ideas')),
     path('', include('meetings.urls', namespace='meetings')),
+    path('chats/', include('chat.urls', namespace='chats')),
 ]
 
 if settings.DEBUG:
