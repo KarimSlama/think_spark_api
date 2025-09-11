@@ -49,7 +49,7 @@ pillow==11.1.0
 propcache==0.3.1
 proto-plus==1.26.1
 protobuf==5.29.4
-psycopg2==2.9.10
+psycopg2-binary==2.9.10
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pycparser==2.22
@@ -72,4 +72,3 @@ uritemplate==4.1.1
 urllib3==2.3.0
 yarl==1.19.0
 zope.interface==7.2
-Django==4.2.0
