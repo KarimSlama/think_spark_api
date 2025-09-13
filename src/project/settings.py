@@ -48,7 +48,7 @@ if IS_VERCEL:
     ALLOWED_HOSTS = ['.vercel.app', '.now.sh']
     DEBUG = False
     # Use environment variables for sensitive data
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = env('SECRET_KEY', default='django-insecure-fallback-key-for-dev')
 else:
     # إعدادات Local Development
     ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
