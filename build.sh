@@ -2,6 +2,9 @@
 # Build script for Vercel
 # This script runs migrations and collects static files
 
+# Install dependencies
+pip install -r requirements.txt
+
 cd src
 python manage.py migrate --noinput || true
 python manage.py collectstatic --noinput || true
