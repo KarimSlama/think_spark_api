@@ -17,5 +17,10 @@
   ],
   "env": {
     "PYTHONPATH": "src"
+  },
+  "functions": {
+    "src/project/wsgi.py": {
+      "includeFiles": "src/**"
+    }
   }
 }

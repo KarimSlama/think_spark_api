@@ -31,7 +31,8 @@ if os.path.exists(env_file):
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY', default='django-insecure-fallback-key-for-dev')
+# On Vercel, SECRET_KEY must be set as environment variable
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-fallback-key-for-dev-change-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG', default=False)
@@ -45,7 +46,7 @@ if IS_VERCEL:
     ALLOWED_HOSTS = ['.vercel.app', '.now.sh', '*']
     DEBUG = False
     # Use environment variables for sensitive data
-    SECRET_KEY = env('SECRET_KEY', default='django-insecure-fallback-key-for-dev')
+    # SECRET_KEY should be set in Vercel environment variables
 else:
     # إعدادات Local Development
     ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
@@ -59,7 +60,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'whitenoise.runserver_nostatic',  # أضافة WhiteNoise
     'rest_framework',
     'rest_framework_simplejwt',
 
@@ -76,6 +76,10 @@ INSTALLED_APPS = [
     "corsheaders",
     'chat'
 ]
+
+# Add WhiteNoise only for local development
+if IS_LOCAL:
+    INSTALLED_APPS.insert(6, 'whitenoise.runserver_nostatic')
 
 # Only add Channels/Daphne for local development (WebSocket not supported on Vercel free plan)
 if IS_LOCAL:
@@ -135,7 +139,6 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # إضافة WhiteNoise middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -144,6 +147,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Add WhiteNoise only for local development
+if IS_LOCAL:
+    MIDDLEWARE.insert(2, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 from datetime import timedelta
 
@@ -175,11 +182,16 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 # Database
 if IS_VERCEL:
-    # استخدام SQLite في الذاكرة للتجربة - يمكن تغييرها لPostgreSQL لاحقاً
+    # استخدام SQLite في ملف مؤقت على Vercel
+    # Note: البيانات ستضيع عند كل cold start - استخدم PostgreSQL للإنتاج
+    import tempfile
+    import os as os_module
+    db_dir = tempfile.gettempdir()
+    db_path = os_module.path.join(db_dir, 'vercel_db.sqlite3')
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',  # في الذاكرة مؤقتاً
+            'NAME': db_path,
         }
     }
 else:
@@ -228,7 +240,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+if IS_VERCEL:
+    # On Vercel, use /tmp for static files
+    STATIC_ROOT = '/tmp/staticfiles'
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # إزالة static directory إذا لم يكن موجود
 if os.path.exists(os.path.join(BASE_DIR, "static")):
@@ -236,8 +253,9 @@ if os.path.exists(os.path.join(BASE_DIR, "static")):
 else:
     STATICFILES_DIRS = []
 
-# WhiteNoise configuration
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# WhiteNoise configuration - only if not on Vercel
+if not IS_VERCEL:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'
