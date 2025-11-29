@@ -230,8 +230,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 if IS_VERCEL:
-    # On Vercel, use /tmp for static files
-    STATIC_ROOT = '/tmp/staticfiles'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build')
 else:
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
