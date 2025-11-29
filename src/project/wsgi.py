@@ -17,13 +17,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 
 from django.core.wsgi import get_wsgi_application
 
-try:
-    handler = get_wsgi_application()
-    # Also export as 'application' for compatibility
-    application = handler
-except Exception as e:
-    # Log error for debugging
-    import traceback
-    print(f"Error initializing Django: {e}")
-    print(traceback.format_exc())
-    raise
+# Initialize Django
+django_app = get_wsgi_application()
+
+# Vercel expects 'handler' variable - export WSGI application directly
+handler = django_app
+application = django_app
+app = django_app
