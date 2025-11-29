@@ -11,8 +11,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 # Import Django WSGI application
 from django.core.wsgi import get_wsgi_application
 
-# Vercel expects 'handler' variable
-handler = get_wsgi_application()
-# Also export as 'application' for compatibility
-application = handler
+# Vercel Python runtime expects 'app' variable (not 'handler')
+app = get_wsgi_application()
+
+# Also export as 'handler' and 'application' for compatibility
+handler = app
+application = app
 
