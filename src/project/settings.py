@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'daphne',
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',  # أضافة WhiteNoise
     'rest_framework',
@@ -75,9 +74,13 @@ INSTALLED_APPS = [
     'ideas',
     'meetings',
     "corsheaders",
-    'channels',
     'chat'
 ]
+
+# Only add Channels/Daphne for local development (WebSocket not supported on Vercel free plan)
+if IS_LOCAL:
+    INSTALLED_APPS.insert(4, 'daphne')
+    INSTALLED_APPS.append('channels')
 
 # Cloudinary (only if credentials are available)
 if env('CLOUDINARY_CLOUD_NAME', default=None):
@@ -101,10 +104,10 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-ASGI_APPLICATION = 'project.asgi.application'
-
-# Redis/Channels configuration
+# ASGI application only for local development (WebSocket not supported on Vercel free plan)
 if IS_LOCAL:
+    ASGI_APPLICATION = 'project.asgi.application'
+    
     # Local Redis
     CHANNEL_LAYERS = {
         'default': {
@@ -117,14 +120,6 @@ if IS_LOCAL:
                 },
                 "capacity": 1000,
             },
-        },
-    }
-else:
-    # Vercel doesn't support WebSockets/Redis easily
-    # Use in-memory channel layer for deployment
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels.layers.InMemoryChannelLayer',
         },
     }
 
