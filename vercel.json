@@ -17,5 +17,10 @@
   ],
   "env": {
     "PYTHONPATH": "src"
+  },
+  "functions": {
+    "api/index.py": {
+      "includeFiles": "src/**"
+    }
   }
 }

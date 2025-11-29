@@ -24,3 +24,8 @@ media/
 staticfiles/
 static/
 
+# Prevent Vercel from auto-detecting wsgi.py as a serverless function
+# We use api/index.py instead
+src/project/wsgi.py
+src/project/asgi.py
+
