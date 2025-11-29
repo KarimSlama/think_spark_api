@@ -13,8 +13,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import environ
-from django.conf import settings
-from django.conf.urls.static import static
 
 
 env = environ.Env(
