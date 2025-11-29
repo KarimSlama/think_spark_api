@@ -5,7 +5,8 @@
       "src": "src/project/wsgi.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "50mb"
+        "maxLambdaSize": "50mb",
+        "includeFiles": "src/**"
       }
     }
   ],
@@ -17,10 +18,5 @@
   ],
   "env": {
     "PYTHONPATH": "src"
-  },
-  "functions": {
-    "src/project/wsgi.py": {
-      "includeFiles": "src/**"
-    }
   }
 }
