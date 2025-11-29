@@ -1,20 +1,15 @@
-# Vercel serverless function entry point
 import os
 import sys
 
-# Add src to Python path
+# Add src directory to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-# Set Django settings
+# Set Django settings module
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 
-# Import Django WSGI application
+# Get Django WSGI application
 from django.core.wsgi import get_wsgi_application
 
-# Vercel Python runtime expects 'app' variable (not 'handler')
+# Vercel expects 'app' variable
 app = get_wsgi_application()
-
-# Also export as 'handler' and 'application' for compatibility
-handler = app
-application = app
 
