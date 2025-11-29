@@ -1,13 +1,38 @@
 import firebase_admin
 from firebase_admin import credentials, messaging
 import os
+from pathlib import Path
 
+# Try to initialize Firebase only if credentials file exists
 if not firebase_admin._apps:
-    cred = credentials.Certificate(os.path.join(
-        'E:/Django Projects/think-spark-1c5d6-firebase-adminsdk-fbsvc-976e200044.json'))
-    firebase_admin.initialize_app(cred)
+    # Try multiple possible paths for Firebase credentials
+    possible_paths = [
+        os.path.join('E:/Django Projects/think-spark-1c5d6-firebase-adminsdk-fbsvc-976e200044.json'),
+        os.path.join(Path(__file__).resolve().parent.parent.parent, 'think-spark-1c5d6-firebase-adminsdk-fbsvc-976e200044.json'),
+        os.environ.get('FIREBASE_CREDENTIALS_PATH'),
+    ]
+    
+    cred_path = None
+    for path in possible_paths:
+        if path and os.path.exists(path):
+            cred_path = path
+            break
+    
+    if cred_path:
+        try:
+            cred = credentials.Certificate(cred_path)
+            firebase_admin.initialize_app(cred)
+        except Exception as e:
+            print(f"Warning: Failed to initialize Firebase Admin: {e}")
+    else:
+        print("Warning: Firebase credentials file not found. Notifications will not work.")
 
 def send_notification(token, title, body, data=None):
+    # Check if Firebase is initialized
+    if not firebase_admin._apps:
+        print("Warning: Firebase Admin not initialized. Cannot send notification.")
+        return False
+    
     try:
         message = messaging.Message(
             notification=messaging.Notification(

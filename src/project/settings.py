@@ -179,27 +179,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'project.wsgi.application'
 
 # Database
-if IS_VERCEL:
-    # استخدام SQLite في ملف مؤقت على Vercel
-    # Note: البيانات ستضيع عند كل cold start - استخدم PostgreSQL للإنتاج
-    import tempfile
-    import os as os_module
-    db_dir = tempfile.gettempdir()
-    db_path = os_module.path.join(db_dir, 'vercel_db.sqlite3')
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': db_path,
-        }
+# Support DATABASE_URL from Supabase or individual components
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME', default='postgres'),
+        'USER': env('DB_USER', default='postgres'),
+        'PASSWORD': env('DB_PASSWORD', default=''),
+        'HOST': env('DB_HOST', default='localhost'),
+        'PORT': env('DB_PORT', default='5432'),
     }
-else:
-    # Local SQLite
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 # External service credentials (optional)
 TWILIO_ACCOUNT_SID = env('TWILIO_ACCOUNT_SID', default=None)
