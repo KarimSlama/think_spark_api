@@ -1,0 +1,26 @@
+# Vercel ignore file - exclude large directories from deployment
+Lib/
+Scripts/
+pyvenv.cfg
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+venv/
+ENV/
+env/
+.vscode/
+.idea/
+*.log
+db.sqlite3
+media/
+staticfiles/
+static/
+
